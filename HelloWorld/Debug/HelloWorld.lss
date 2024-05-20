@@ -1,0 +1,6 @@
+
+AVRASM ver. 2.2.8  C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm Mon May 20 14:34:06 2024
+
+[builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
+C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm(9): error: x00: Unknown instruction or macro
+C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm(10): error: x00: Unknown instruction or macro
