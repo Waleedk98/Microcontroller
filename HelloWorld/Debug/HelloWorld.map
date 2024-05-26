@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm Mon May 20 14:54:18 2024
+AVRASM ver. 2.2.8  C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm Sun May 26 12:05:45 2024
 
 
 EQU  SIGNATURE_000 0000001e
@@ -698,4 +698,4 @@ EQU  INT_VECTORS_SIZE 00000034
 EQU  output_bit   00000002
 EQU  input_bit    00000003
 EQU  input_bit2   00000004
-CSEG start        00000003
+CSEG start        00000001

@@ -4,12 +4,12 @@
 
     ; Set DDRD bit 2 (PD2) as output
     sbi DDRD, output_bit
-    
-    ; Initialize registers
+
+start:
+    ; Reset r17 and r18 at the start of each loop iteration
     ldi r17, 0x00    ; reset r17
     ldi r18, 0x00    ; reset r18
 
-start:
     ; Read PIND into r16
     in r16, PIND
 
@@ -31,4 +31,10 @@ start:
     ; Set bit 2 in PORTD (turn LED on)
     sbi PORTD, output_bit
 
-    ; Skip if bit 0 in
+    ; Skip if bit 0 in r17 is set (if result was 1)
+    sbrs r17, 0
+    ; Clear bit 2 in PORTD (turn LED off)
+    cbi PORTD, output_bit
+
+    ; Repeat the loop
+    rjmp start
