@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm Sun May 26 12:05:45 2024
+AVRASM ver. 2.2.8  C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm Sat Jun 15 10:45:04 2024
 
 
 EQU  SIGNATURE_000 0000001e
@@ -695,7 +695,14 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
-EQU  output_bit   00000002
-EQU  input_bit    00000003
-EQU  input_bit2   00000004
-CSEG start        00000001
+EQU  clk_freq_in_Hz 00f42400
+EQU  blink_freq_in_Hz 00000001
+EQU  cnt_Start    00117049
+DEF  accu         r16
+DEF  cnt_low      r17
+DEF  cnt_mid      r18
+DEF  cnt_high     r19
+DEF  zero_test    r20
+CSEG start        00000003
+CSEG delay_long   0000000d
+CSEG delay_loop   0000000e

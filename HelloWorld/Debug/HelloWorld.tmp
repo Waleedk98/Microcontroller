@@ -22,6 +22,8 @@
   <FILE>HelloWorld.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <start><FILE>C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm</FILE><LINE>8</LINE></start>
+  <start><FILE>C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm</FILE><LINE>62</LINE></start>
+  <delay_long><FILE>C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm</FILE><LINE>78</LINE></delay_long>
+  <delay_loop><FILE>C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm</FILE><LINE>80</LINE></delay_loop>
  </LABELS>
 </ASSEMBLER_INFO>

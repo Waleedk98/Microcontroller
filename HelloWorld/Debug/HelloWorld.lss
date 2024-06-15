@@ -1,10 +1,10 @@
 
-AVRASM ver. 2.2.8  C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm Sun May 26 12:05:45 2024
+AVRASM ver. 2.2.8  C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWorld\main.asm Sat Jun 15 10:45:04 2024
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
                                  
-                                 .equ output_bit = 2
+                                  /*.equ output_bit = 2
                                  
                                  ;***** Created: 2011-02-09 12:03 ******* Source: ATmega328P.xml **********
                                  ;*************************************************************************
@@ -985,45 +985,94 @@ AVRASM ver. 2.2.8  C:\Users\walee\Documents\Atmel Studio\7.0\HelloWorld\HelloWor
                                  
                                  ; ***** END OF FILE ******************************************************
                                  
-                                 .equ input_bit = 3
-                                 .equ input_bit2 = 4
+                                  .equ input_bit = 3
+                                  .equ input_bit2 = 4
                                  
                                      ; Set DDRD bit 2 (PD2) as output
-000000 9a52                          sbi DDRD, output_bit
+                                     sbi DDRD, output_bit
                                  
                                  start:
                                      ; Reset r17 and r18 at the start of each loop iteration
-000001 e010                          ldi r17, 0x00    ; reset r17
-000002 e020                          ldi r18, 0x00    ; reset r18
+                                     ldi r17, 0x00    ; reset r17
+                                     ldi r18, 0x00    ; reset r18
                                  
                                      ; Read PIND into r16
-000003 b109                          in r16, PIND
+                                     in r16, PI ND
                                  
                                      ; Bit Store to T from button 1 (PD3)
-000004 fb03                          bst r16, input_bit
+                                     bst r16, input_bit
                                      ; Bit Load from T to r17 bit 0
-000005 f910                          bld r17, 0
+                                     bld r17, 0
                                  
                                      ; Bit Store to T from button 2 (PD4)
-000006 fb04                          bst r16, input_bit2
+                                     bst r16, input_bit2
                                      ; Bit Load from T to r18 bit 0
-000007 f920                          bld r18, 0
+                                     bld r18, 0
                                  
                                      ; XOR r17 and r18
-000008 2712                          eor r17, r18
+                                     eor r17, r18
                                  
                                      ; Skip if bit 0 in r17 is clear (if result was 0)
-000009 fd10                          sbrc r17, 0
+                                     sbrc r17, 0
                                      ; Set bit 2 in PORTD (turn LED on)
-00000a 9a5a                          sbi PORTD, output_bit
+                                     sbi PORTD, output_bit
                                  
                                      ; Skip if bit 0 in r17 is set (if result was 1)
-00000b ff10                          sbrs r17, 0
+                                     sbrs r17, 0
                                      ; Clear bit 2 in PORTD (turn LED off)
-00000c 985a                          cbi PORTD, output_bit
+                                     cbi PORTD, output_bit
                                  
                                      ; Repeat the loop
-00000d cff3                          rjmp start
+                                     rjmp start
+                                 	*/
+                                 
+                                 	; Konstanten und Definition
+                                 	.equ clk_freq_in_Hz = 16000000												;Taktfrequenz des Microcontrollers
+                                 	.equ blink_freq_in_Hz = 1													;Blinkfrequenz der LED in Hz (1Hz = 1s an, 1s aus)
+                                 
+                                 	;Berechnung des Startwertes für den Zähler (7 Taktzyklen pro Schleife, 0,5s an, 0,5 aus)
+                                 	.equ cnt_Start = (clk_freq_in_Hz / blink_freq_in_Hz) / (7 * 2)
+                                 	
+                                 	.def accu = r16																;Akkumulator
+                                 	.def cnt_low = r17															;Niedrigster Byte des Zählers
+                                 	.def cnt_mid = r18															;Middle Byte of counter
+                                 	.def cnt_high = r19															;highest Byte of counter
+                                 	.def zero_test = r20														;Register für Zero-Test
+                                 	  
+                                    ;Initialisierung
+000000 9a52                         sbi DDRD, 2		;set PD2 as Output
+000001 9a5b                         sbi PORTD, 3		;Schalte internen Pull-up-Wiederstand für PD3 aus (Button1)
+000002 9a5c                         sbi PORTD, 4		;Schalte internen Pull-up-Wiederstand für PD4 aus (Button2)
+                                 
+                                    ;Hauptschleife
+                                    start:
+000003 9a5a                      		sbi PORTD, 2		;Schalte LED an (PD2 auf High setzen)
+                                 		;Zähler zurücksetzen
+000004 e419                      		ldi cnt_low, byte1(cnt_start)		;Lade das niedrigste Byte des Startwerts in cnt_low
+000005 e720                      		ldi cnt_mid, byte2(cnt_start)		;Lade das mittlere Byte des Startwerts in cnt_mid
+000006 e131                      		ldi cnt_high, byte3(cnt_start)		;Lade das höhste Byte des Startwerts in cnt_high
+000007 d005                      		rcall delay_long					;Rufe die Verzögerung auf
+                                 
+000008 985a                      		cbi PORTD, 2		;Schalte LED aus (PD2 auf Low setzen)
+                                 		;Zähler zurücksetzen
+000009 e419                      		ldi cnt_low, byte1(cnt_start)		;Lade das niedrigste Byte des Startwerts in cnt_low
+00000a e720                      		ldi cnt_mid, byte2(cnt_start)		;Lade das mittlere Byte des Startwerts in cnt_mid
+00000b e131                      		ldi cnt_high, byte3(cnt_start)		;Lade das höhste Byte des Startwerts in cnt_high
+00000c d000                      		rcall delay_long					;Rufe die Verzögerung auf
+                                 
+                                 		; delay_long Methode
+                                 		delay_long:
+00000d 9488                      		clc		;clear Cary
+                                 		delay_loop:
+00000e 4011                      		sbci cnt_low, 1		;verringere das niedrigste Byte um 1
+00000f 4020                      		sbci cnt_mid, 0		;verringere das mittlere Byte um 1 (mit Berücksichtigungs des Übertrags)
+000010 4030                      		sbci cnt_high,0     ;verringere das höhste Byte um 1 (mit Berücksichtigung des Übertrags)
+000011 2333                      		tst cnt_high		;Test das höhste Byte
+000012 f7d9                      		brne delay_loop		;wenn cnt_high != , springe zu delay_loop
+000013 2322                      		tst cnt_mid         ;Test mid Byte
+000014 f7c9                      		brne delay_loop     ;""
+000015 2311                      		tst cnt_low			;""
+000016 f7b9                      		brne delay_loop		;""
 
 
 RESOURCE USE INFORMATION
@@ -1043,37 +1092,37 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 x  :   0 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:   3 r17:   5 r18:   3 r19:   0 r20:   0 
+r13:   0 r14:   0 r15:   0 r16:   0 r17:   4 r18:   4 r19:   4 r20:   0 
 r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
 r29:   0 r30:   0 r31:   0 
 Registers used: 3 out of 35 (8.6%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
-andi  :   0 asr   :   0 bclr  :   0 bld   :   2 brbc  :   0 brbs  :   0 
+andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   0 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   2 call  :   0 cbi   :   1 cbr   :   0 
-clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
+brne  :   3 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   1 cbr   :   0 
+clc   :   1 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   0 cpse  :   0 dec   :   0 eor   :   1 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   0 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :   2 lds   :   0 lpm   :   0 lsl   :   0 
+cpi   :   0 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   0 
+ld    :   0 ldd   :   0 ldi   :   6 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   0 pop   :   0 
-push  :   0 rcall :   0 ret   :   0 reti  :   0 rjmp  :   1 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   2 sbic  :   0 sbis  :   0 
-sbiw  :   0 sbr   :   0 sbrc  :   1 sbrs  :   1 sec   :   0 seh   :   0 
+push  :   0 rcall :   2 ret   :   1 reti  :   0 rjmp  :   0 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   3 sbi   :   4 sbic  :   0 sbis  :   0 
+sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   0 
-sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 10 out of 113 (8.8%)
+sub   :   0 subi  :   0 swap  :   0 tst   :   3 wdr   :   0 
+Instructions used: 9 out of 113 (8.0%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00001c     28      0     28   32768   0.1%
+[.cseg] 0x000000 0x000030     48      0     48   32768   0.1%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
